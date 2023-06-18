@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import Loader from '../components/PageLoader';
+import { checkIfServerOn } from "../js/admin";
 
 function SignUpForm() {
     const [email, pass, confPass] = [useRef(), useRef(), useRef()];
