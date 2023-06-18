@@ -54,7 +54,7 @@ export function checkIfServerOn(){
   fetch(process.env.REACT_APP_WE_SERVIN)
   .then(response => response.json())
   .then(data =>{
-    if(typeof data == "boolean" && data == true){
+    if(typeof data === "boolean" && data === true){
       return data;
     }
   })
