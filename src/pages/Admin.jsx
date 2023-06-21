@@ -1,5 +1,6 @@
 import React, {useRef} from 'react';
-import {getSpecificTitle, titleOptions, searchTitles, checkIfServerOn} from '../js/admin.js';
+import {getSpecificTitle, titleOptions, searchTitles, checkIfServerOn,
+        getReviews, checkAuth, getGames} from '../js/admin.js';
 import '../css/admin.css';
 import '../css/general.css';
 import '../css/admin-menu.css';
@@ -81,7 +82,7 @@ function EditForm({closeEditForm}){
       });
     })();
 
-    fetch(`/api/games/update/cat/${titleOptions.storeTitle.id}`,{
+    fetch(`${process.env.REACT_APP_WE_SERVIN}/api/games/update/cat/${titleOptions.storeTitle.id}`,{
       method: "put",
       headers: {"Content-type": "application/json"},
       body: JSON.stringify({
@@ -194,7 +195,7 @@ function ReviewSection() {
 
     async function deleReview(e) {
         try {
-            const response = await fetch(`/api/reviews/deletereview/${e.currentTarget.id}`, {
+            const response = await fetch(`${process.env.REACT_APP_WE_SERVIN}/api/reviews/deletereview/${e.currentTarget.id}`, {
                 method: "delete"
             });
             const data = await response.json();
@@ -210,16 +211,9 @@ function ReviewSection() {
         }
     }
 
-    useEffect(() => {
-        fetch("/api/reviews")
-            .then(response => {
-                return response.json();
-            })
-        .then(data => {
-            console.log(data);
-            setReviews(prev => prev = data);
-        })
-            .catch(err => { console.log(err); })
+    useEffect(async () => {
+      const fetchedReviews = await getReviews();
+      setReviews(prev => prev = fetchedReviews);
     }, []);
 
     return(
@@ -394,7 +388,7 @@ export default function Admin(){
             });
         })();
 
-        fetch("/api/games/create", {
+        fetch(`${process.env.REACT_APP_WE_SERVIN}/api/games/create`, {
             method: "post",
             headers: { "Content-type": "application/json" },
             redirect: 'follow',
@@ -412,47 +406,31 @@ export default function Admin(){
     } 
 
     // Check if server up and running
-    useEffect(()=>{
-      const serverChecker = setInterval(checkIfServerOn, 3000);
+    useEffect(async()=>{
+      const isServerOn = await checkIfServerOn();
 
-      if(checkIfServerOn()){
+      if(isServerOn){
         clearInterval(serverChecker);
-        setIsServerOn(prev => prev = checkIfServerOn());
+        setIsServerOn(prev => prev = isServerOn);
+        return;
       }
+
+      const serverChecker = setInterval(checkIfServerOn, 3000);
 
       return()=>{
         clearInterval(serverChecker);
       }
     }, [])
 
-    useEffect(() => {
-        fetch("/admins")
-            .then(response => {
-                if (response.redirected) {
-                    window.location = response.url;
-                }
-                else {
-                    return response.json();
-                }
-            })
-            .then(data => {
-                setCurrentAdmin(prev => prev = data);
-            })
-            .catch(err => {
-                console.log(err);
-            })
+    useEffect(async() => {
+      const currAdmin = await checkAuth();
+      setCurrentAdmin(prev => prev = currAdmin);
     }, []);
 
 //Get titles and append them to the page
-  useEffect(()=>{
-    fetch('api/games')
-    .then(response => response.json())
-    .then(data=>{
-      setTitles(prev => prev = data);
-    })
-    .catch(err=>{
-      console.log(`Couldn't get the titles! ${err}`);
-    });
+  useEffect(async()=>{
+    const fetchedGames = await getGames();
+    setTitles(prev => prev = fetchedGames);
   }, []);
 
   return(

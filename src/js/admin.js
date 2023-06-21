@@ -50,17 +50,53 @@ export async function searchTitles(){
   }
 }
 
-export function checkIfServerOn(){
-  fetch(process.env.REACT_APP_WE_SERVIN)
-  .then(response => response.json())
-  .then(data =>{
-    if(typeof data === "boolean" && data === true){
-      return data;
-    }
-  })
-  .catch(err =>{
-    console.log("Something went wrong!" + err);
-  })
+// Requests
+export async function checkIfServerOn(){
+  try{
+    const response = await fetch(process.env.REACT_APP_WE_SERVIN);
+    const data = await response.json();
+    console.log(data);
+
+  if(data){
+    return data;
+  }
+  }
+  catch(err){
+    console.log(`Something went wrong! ${err}`);
+  }
 }
 
+export async function getReviews(){
+  try{
+    const response = await fetch(`${process.env.REACT_APP_WE_SERVIN}/api/reviews`);
+    return await response.json();
+  }
+  catch(err){
+    console.log(`Was unable to obtain the reviews! ${err}`);
+  }
+}
 
+export async function checkAuth(){
+  try{
+    const response = await fetch(`${process.env.REACT_APP_WE_SERVIN}/admins`);
+    if(response.redirected){
+      window.location = "/signin";
+    }
+    else{
+      return await response.json();
+    }
+  }
+  catch(err){
+    console.log(`Something went wrong with the auth. ${err}`);
+  }
+}
+
+export async function getGames(){
+  try{
+    const response = await fetch(`${process.env.REACT_APP_WE_SERVIN}/api/games`);
+    return await response.json();
+  }
+  catch(err){
+    console.log(`Was unable to obtain the titles! ${err}`);
+  }
+}
