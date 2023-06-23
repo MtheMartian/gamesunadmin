@@ -8,25 +8,25 @@ import SignIn from './pages/SignIn';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-const path = "/build/"; 
+//const path = "/build"; 
 
 const router = createBrowserRouter([
     {
-        path: path,
+        path: "/",
         element: <Admin />,
         errorElement: <NoPage />
     },
     {
-        path: `${path}/signup`,
+        path: "/signup",
         element: <SignUp />,
         errorElement: <NoPage />
     },
     {
-        path: `${path}/signin`,
+        path: "/signin",
         element: <SignIn />,
         errorElement: <NoPage />
     }
-    ])
+])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
