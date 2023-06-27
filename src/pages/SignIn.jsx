@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import {checkIfServerOn} from '../js/admin.js';
+import {checkAuth, checkIfServerOn} from '../js/admin.js';
 import '../css/auth-pages.css';
 import Loader from '../components/PageLoader';
 
@@ -71,17 +71,7 @@ export default function SignInPage() {
       }, [])
 
     useEffect(() => {
-        fetch("/admins")
-            .then(response => {
-                console.log(response);
-                if (!response.redirected) {
-                    window.location = "/";
-                }
-            })
-
-            .catch(err => {
-                console.log(err);
-            });
+        checkAuth();
     }, []);
 
     return (

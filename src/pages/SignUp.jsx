@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import Loader from '../components/PageLoader';
-import { checkIfServerOn } from "../js/admin";
+import { checkAuth, checkIfServerOn } from "../js/admin";
 
 function SignUpForm() {
     const [email, pass, confPass] = [useRef(), useRef(), useRef()];
@@ -75,15 +75,7 @@ export default function SignUpPage() {
       }, [])
 
     useEffect(() => {
-        fetch("/admins")
-            .then(response => {
-                if (response.redirected) {
-                    window.location = response.url;
-                }
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        checkAuth();
     }, []);
 
     return (

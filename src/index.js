@@ -8,8 +8,6 @@ import SignIn from './pages/SignIn';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-//const path = "/build"; 
-
 const router = createBrowserRouter([
     {
         path: "/",

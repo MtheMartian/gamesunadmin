@@ -78,13 +78,17 @@ export async function getReviews(){
 
 export async function checkAuth(){
   try{
-    const response = await fetch(`${process.env.REACT_APP_WE_SERVIN}/admins`);
-    if(response.redirected){
-      window.location = "/signin";
+    const response = await fetch(`${process.env.REACT_APP_WE_SERVIN}/admins/auth`,{
+      method: 'post',
+      headers: {"Content-type": "application/json"},
+      body: JSON.stringify(window.location.href)
+    });
+    if(!response.redirected){
+        return await response.json();
     }
-    else{
-      return await response.json();
-    }
+    setTimeout(()=>{
+      window.location.href = response.url;
+    }, 2000);
   }
   catch(err){
     console.log(`Something went wrong with the auth. ${err}`);
