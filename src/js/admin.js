@@ -51,24 +51,9 @@ export async function searchTitles(){
 }
 
 // Requests
-export async function checkIfServerOn(){
-  try{
-    const response = await fetch(process.env.REACT_APP_WE_SERVIN);
-    const data = await response.json();
-    console.log(data);
-
-  if(data){
-    return data;
-  }
-  }
-  catch(err){
-    console.log(`Something went wrong! ${err}`);
-  }
-}
-
 export async function getReviews(){
   try{
-    const response = await fetch(`${process.env.REACT_APP_WE_SERVIN}/api/reviews`);
+    const response = await fetch(`/api/reviews`);
     return await response.json();
   }
   catch(err){
@@ -76,19 +61,31 @@ export async function getReviews(){
   }
 }
 
+function sliceUrl(url){
+  let startingIndex = 0;
+  let slashCount = 0;
+  for(let i = 0; i < url.length; i++){
+    if(url[i] === '/' && slashCount < 3){
+      slashCount++;
+      startingIndex = i;
+    }
+    if(slashCount === 3) break;
+  }
+  return url.slice(startingIndex);
+}
+
 export async function checkAuth(){
   try{
-    const response = await fetch(`${process.env.REACT_APP_WE_SERVIN}/admins/auth`,{
-      method: 'post',
-      headers: {"Content-type": "application/json"},
-      body: JSON.stringify(window.location.href)
+    const response = await fetch(`/admins/auth`,{
+      method: 'get',
     });
     if(!response.redirected){
         return await response.json();
     }
-    setTimeout(()=>{
-      window.location.href = response.url;
-    }, 2000);
+    else if(!window.location.href.includes("/signin")){
+      return sliceUrl(response.url);
+    }
+    return;
   }
   catch(err){
     console.log(`Something went wrong with the auth. ${err}`);
@@ -97,7 +94,7 @@ export async function checkAuth(){
 
 export async function getGames(){
   try{
-    const response = await fetch(`${process.env.REACT_APP_WE_SERVIN}/api/games`);
+    const response = await fetch(`/api/games`);
     return await response.json();
   }
   catch(err){

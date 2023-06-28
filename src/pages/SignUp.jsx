@@ -1,14 +1,14 @@
 import React, { useRef, useEffect, useState } from "react";
-import Loader from '../components/PageLoader';
-import { checkAuth, checkIfServerOn } from "../js/admin";
+import { checkAuth} from "../js/admin";
+import {useNavigate} from "react-router-dom";
 
 function SignUpForm() {
     const [email, pass, confPass] = [useRef(), useRef(), useRef()];
     const [errorMessage, setErrorMessage] = useState(null);
+    const navigate = useNavigate();
     
-
     async function signUp() {
-        const response = await fetch("/admins/signup", {
+        const response = await fetch(`/admins/signup`, {
             method: "post",
             headers: { "Content-type": "application/json" },
             body: JSON.stringify({
@@ -25,7 +25,7 @@ function SignUpForm() {
             confPass.current.style.border = "2px solid rgb(50,205,50)";
             email.current.style.border = "2px solid rgb(50,205,50)";
             setTimeout(() => {
-                window.location = "/";
+                navigate("/");
             }, 3000);
         }
         else {
@@ -57,37 +57,25 @@ function SignUpForm() {
 }
 
 export default function SignUpPage() {
-    //Server Running?
-    const [isServerOn, setIsServerOn] = useState(false);
-
-     // Check if server up and running
-     useEffect(()=>{
-        const serverChecker = setInterval(checkIfServerOn, 3000);
-  
-        if(checkIfServerOn()){
-          clearInterval(serverChecker);
-          setIsServerOn(prev => prev = checkIfServerOn());
-        }
-  
-        return()=>{
-          clearInterval(serverChecker);
-        }
-      }, [])
+    //Redirect
+    const navigate = useNavigate();
 
     useEffect(() => {
-        checkAuth();
+        async function runThis(){
+            const response = await checkAuth();
+            if(typeof response === "string"){
+                navigate(response);
+            }  
+        }
+        runThis();
     }, []);
 
     return (
-        <div>
-            {isServerOn ? 
-            <div className="auth-page">
-                <div className="auth-page-form-wrapper">
-                    <div className="auth-page-action">Register</div>
-                    <SignUpForm />
-                </div>
-            </div> : <Loader />
-            }
+        <div className="auth-page">
+            <div className="auth-page-form-wrapper">
+                <div className="auth-page-action">Register</div>
+                <SignUpForm />
+            </div>
         </div>
     );
 }

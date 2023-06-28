@@ -1,10 +1,11 @@
 import React, {useRef} from 'react';
-import {getSpecificTitle, titleOptions, searchTitles, checkIfServerOn,
+import {getSpecificTitle, titleOptions, searchTitles,
         getReviews, checkAuth, getGames} from '../js/admin.js';
 import '../css/admin.css';
 import '../css/general.css';
 import '../css/admin-menu.css';
 import {useState, useEffect} from 'react';
+import {useNavigate} from "react-router-dom";
 
 function Loader(){
   return(
@@ -82,7 +83,7 @@ function EditForm({closeEditForm}){
       });
     })();
 
-    fetch(`${process.env.REACT_APP_WE_SERVIN}/api/games/update/cat/${titleOptions.storeTitle.id}`,{
+    fetch(`/api/games/update/cat/${titleOptions.storeTitle.id}`,{
       method: "put",
       headers: {"Content-type": "application/json"},
       body: JSON.stringify({
@@ -195,7 +196,7 @@ function ReviewSection() {
 
     async function deleReview(e) {
         try {
-            const response = await fetch(`${process.env.REACT_APP_WE_SERVIN}/api/reviews/deletereview/${e.currentTarget.id}`, {
+            const response = await fetch(`/api/reviews/deletereview/${e.currentTarget.id}`, {
                 method: "delete"
             });
             const data = await response.json();
@@ -304,15 +305,15 @@ export default function Admin(){
     "Sport", "Story Telling", "VR"];
 
   const platforms = ["PC", "PS4", "PS5", "XSX", "XSS", "Switch"];
+
+//Redirect
+const navigate = useNavigate();
 //Titles useStates
   const [titles, setTitles] = useState([]);
 //Edit Form useStates
   const [editForm, setEditForm] = useState(null);
 //Loader useStates
     const [loader, setLoader] = useState(null);
-
-//Server Running?
-  const [isServerOn, setIsServerOn] = useState(false);
 
 // Admin Page variables
     const adminPage = useRef(null);
@@ -388,7 +389,7 @@ export default function Admin(){
             });
         })();
 
-        fetch(`${process.env.REACT_APP_WE_SERVIN}/api/games/create`, {
+        fetch(`/api/games/create`, {
             method: "post",
             headers: { "Content-type": "application/json" },
             redirect: 'follow',
@@ -405,26 +406,17 @@ export default function Admin(){
         })
     } 
 
-    // Check if server up and running
-    useEffect(async()=>{
-      const isServerOn = await checkIfServerOn();
-
-      if(isServerOn){
-        clearInterval(serverChecker);
-        setIsServerOn(prev => prev = isServerOn);
-        return;
+    useEffect(() => { 
+        async function runThis(){
+          const response = await checkAuth();
+          if(typeof response === "string"){
+              navigate(response);
+          }
+          else{
+            setCurrentAdmin(prev => prev = response);
+          }  
       }
-
-      const serverChecker = setInterval(checkIfServerOn, 3000);
-
-      return()=>{
-        clearInterval(serverChecker);
-      }
-    }, [])
-
-    useEffect(async() => {
-      const currAdmin = await checkAuth();
-      setCurrentAdmin(prev => prev = currAdmin);
+      runThis();
     }, []);
 
 //Get titles and append them to the page
@@ -434,9 +426,7 @@ export default function Admin(){
   }, []);
 
   return(
-    <div>
-      {isServerOn ? 
-      <div id="admin-page" ref={adminPage}>
+    <div id="admin-page" ref={adminPage}>
         {currentAdmin != null ? <Menu adminPage={adminPage} currentAdmin={currentAdmin} /> : null}
         <h1>Admin Tools</h1>
         <div id="title-creation-container">
@@ -518,7 +508,6 @@ export default function Admin(){
         </section>
         <ReviewSection />
         {editForm}
-    </div> : <Loader />}
     </div>
   );
 }

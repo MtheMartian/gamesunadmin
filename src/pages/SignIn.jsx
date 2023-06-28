@@ -1,17 +1,17 @@
 import React, { useRef, useEffect, useState } from "react";
-import {checkAuth, checkIfServerOn} from '../js/admin.js';
+import {checkAuth} from '../js/admin.js';
+import {useNavigate} from "react-router-dom";
 import '../css/auth-pages.css';
-import Loader from '../components/PageLoader';
 
 // TO-DO: COMMENT YOUR CODE DAMMIT!!
 
 function SignInForm() {
     const [email, pass] = [useRef(), useRef()];
     const [errorMessage, setErrorMessage] = useState(null);
-
+    const navigate = useNavigate();
 
     async function signIn() {
-        const response = await fetch("/admins/signin", {
+        const response = await fetch(`/admins/signin`, {
             method: "post",
             headers: { "Content-type": "application/json" },
             body: JSON.stringify({
@@ -36,10 +36,9 @@ function SignInForm() {
             pass.current.style.border = "2px solid rgb(50,205,50)";
             email.current.style.border = "2px solid rgb(50,205,50)";
             setTimeout(() => {
-                window.location = "/";
-            }, 1000)
+                navigate("/");
+            }, 1000);
         }
-      
     }
 
     return (
@@ -53,37 +52,25 @@ function SignInForm() {
 }
 
 export default function SignInPage() {
-    //Server Running?
-    const [isServerOn, setIsServerOn] = useState(false);
-
-     // Check if server up and running
-     useEffect(()=>{
-        const serverChecker = setInterval(checkIfServerOn, 3000);
-  
-        if(checkIfServerOn()){
-          clearInterval(serverChecker);
-          setIsServerOn(prev => prev = checkIfServerOn());
-        }
-  
-        return()=>{
-          clearInterval(serverChecker);
-        }
-      }, [])
+    //Redirect
+    const navigate = useNavigate();
 
     useEffect(() => {
-        checkAuth();
+        async function runThis(){
+            const response = await checkAuth();
+            if(typeof response === "string"){
+                navigate(response);
+            }  
+        }
+        runThis();
     }, []);
 
     return (
-        <div>
-            {isServerOn ? 
-            <div className="auth-page">
-                <div className="auth-page-form-wrapper">
-                    <div className="auth-page-action">Sign In</div>
-                    <SignInForm />
-                </div>
-            </div> : <Loader />
-            }
+        <div className="auth-page">
+            <div className="auth-page-form-wrapper">
+                <div className="auth-page-action">Sign In</div>
+                <SignInForm />
+            </div>
         </div>
     );
 }
