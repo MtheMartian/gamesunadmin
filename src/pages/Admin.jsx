@@ -7,18 +7,6 @@ import '../css/admin-menu.css';
 import {useState, useEffect} from 'react';
 import {useNavigate} from "react-router-dom";
 
-function Loader(){
-  return(
-    <div id="loader">
-      <div id="animation">
-        <div id="animation-inner">
-
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function EditForm({closeEditForm}){
   //Variables
   const [selectedTitleInfo, setSelectedTitle] = useState({
@@ -62,7 +50,7 @@ function EditForm({closeEditForm}){
     document.querySelector('body').style.overflow = "hidden";
   };
 
-  function updateGame(){
+  async function updateGame(){
     let tagsArray = [];
     let platformsArray = [];
 
@@ -83,7 +71,7 @@ function EditForm({closeEditForm}){
       });
     })();
 
-    fetch(`/api/games/update/cat/${titleOptions.storeTitle.id}`,{
+    const response = await fetch(`/api/games/update/cat/${titleOptions.storeTitle.id}`,{
       method: "put",
       headers: {"Content-type": "application/json"},
       body: JSON.stringify({
@@ -109,7 +97,10 @@ function EditForm({closeEditForm}){
           "gameStop": document.getElementById("gameStop").value !== "" ? document.getElementById("gameStop").value : "",
         }
       })
-    })
+    });
+    if(response.redirected){
+      window.location.href = response.url;
+    }
   }
 
   useEffect(()=>{
@@ -212,9 +203,22 @@ function ReviewSection() {
         }
     }
 
-    useEffect(async () => {
-      const fetchedReviews = await getReviews();
-      setReviews(prev => prev = fetchedReviews);
+    useEffect(() => {
+      async function retrieveReviews(){
+        const fetchedReviews = await getReviews();
+        setReviews(prev => prev = fetchedReviews);
+      }
+      retrieveReviews();
+
+      return()=>{
+        setReviews(prev => prev = 
+          [{displayName: "",
+          gameReview: "",
+          whenPosted: "",
+          id: ""
+         }]);
+      }
+      
     }, []);
 
     return(
@@ -312,8 +316,6 @@ const navigate = useNavigate();
   const [titles, setTitles] = useState([]);
 //Edit Form useStates
   const [editForm, setEditForm] = useState(null);
-//Loader useStates
-    const [loader, setLoader] = useState(null);
 
 // Admin Page variables
     const adminPage = useRef(null);
@@ -344,15 +346,6 @@ const navigate = useNavigate();
     event.preventDefault();
   }
 
-//Loader functions
-  function loading(){
-    setLoader(<Loader />);
-  }
-
-  function loaded(){
-    setLoader(null);
-  }
-
 //Function for uploading image
   function showUploadForm(event){
     event.currentTarget.style.opacity = '1';
@@ -362,13 +355,11 @@ const navigate = useNavigate();
   }
 
   async function searchFunctions(){
-    loading();
     await searchTitles();
     setTitles(prev => prev = titleOptions.searchedTitles);
-    loaded();
     }
 
-    function submitGame() {
+    async function submitGame() {
         let tagsArray = [];
         let platformsArray = [];
 
@@ -389,7 +380,7 @@ const navigate = useNavigate();
             });
         })();
 
-        fetch(`/api/games/create`, {
+        const response = await fetch(`/api/games/create`, {
             method: "post",
             headers: { "Content-type": "application/json" },
             redirect: 'follow',
@@ -403,7 +394,10 @@ const navigate = useNavigate();
                 "Publisher": createFormPublisher.current.value,
                 "ReleaseDate": createFormReleaseDate.current.value,
             })
-        })
+        });
+        if(response.redirected){
+          window.location.href = response.url;
+        }
     } 
 
     useEffect(() => { 
@@ -417,14 +411,25 @@ const navigate = useNavigate();
           }  
       }
       runThis();
+
+      return()=>{
+        setCurrentAdmin(prev => prev = null);
+      }
     }, []);
 
 //Get titles and append them to the page
-  useEffect(async()=>{
-    const fetchedGames = await getGames();
-    setTitles(prev => prev = fetchedGames);
-  }, []);
+  useEffect(()=>{
+    async function retrieveGames(){
+      const fetchedGames = await getGames();
+      setTitles(prev => prev = fetchedGames);
+    }
+    retrieveGames();
 
+    return()=>{
+      setTitles(prev => prev = []);
+    }
+  }, []);
+  
   return(
     <div id="admin-page" ref={adminPage}>
         {currentAdmin != null ? <Menu adminPage={adminPage} currentAdmin={currentAdmin} /> : null}
@@ -481,7 +486,6 @@ const navigate = useNavigate();
                         id="search-titles" onKeyUp={searchFunctions}/>
           </div>
           <div id="titles">
-            {loader}
             {titles.map((title, index)=>
               <div key={index} className="title-container">
                 <div className="titles-section-image-wrapper">

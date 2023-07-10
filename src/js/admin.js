@@ -92,6 +92,18 @@ export async function checkAuth(){
   }
 }
 
+export async function checkIfAlreadyIn(){
+  const response = await fetch("/admins/isin", {
+    method: 'get'
+  });
+  if(response.redirected){
+    return sliceUrl(response.url);
+  }
+  else{
+    return null;
+  }
+}
+
 export async function getGames(){
   try{
     const response = await fetch(`/api/games`);

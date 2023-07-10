@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import {checkAuth} from '../js/admin.js';
+import {checkAuth, checkIfAlreadyIn} from '../js/admin.js';
 import {useNavigate} from "react-router-dom";
 import '../css/auth-pages.css';
 
@@ -61,6 +61,16 @@ export default function SignInPage() {
             if(typeof response === "string"){
                 navigate(response);
             }  
+        }
+        runThis();
+    }, []);
+
+    useEffect(()=>{
+        async function runThis(){
+            const response = await checkIfAlreadyIn();
+            if(response !== null){
+                navigate(response);
+            }
         }
         runThis();
     }, []);
