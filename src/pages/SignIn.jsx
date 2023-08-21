@@ -10,43 +10,43 @@ function SignInForm() {
     const [errorMessage, setErrorMessage] = useState(null);
     const navigate = useNavigate();
 
-    async function signIn() {
-        const response = await fetch(`/admins/signin`, {
-            method: "post",
-            headers: { "Content-type": "application/json" },
-            body: JSON.stringify({
-                "Email": email.current.value,
-                "Password": pass.current.value,
-            })
-        });
+    // async function signIn() {
+    //     const response = await fetch(`/admins/signin`, {
+    //         method: "post",
+    //         headers: { "Content-type": "application/json" },
+    //         body: JSON.stringify({
+    //             "Email": email.current.value,
+    //             "Password": pass.current.value,
+    //         })
+    //     });
 
-        const data = await response.text();
-        if (data !== "Success") {
-            if (data.includes("Password")) {
-                pass.current.style.border = "2px solid red";
-                setErrorMessage(prev => prev = data);
-            }
-            else if (data.includes("Email")) {
-                email.current.style.border = "2px solid red";
-                setErrorMessage(prev => prev = data);
-            }
-        }
-        else if(data === "Success") {
-            setErrorMessage(prev => prev = null);
-            pass.current.style.border = "2px solid rgb(50,205,50)";
-            email.current.style.border = "2px solid rgb(50,205,50)";
-            setTimeout(() => {
-                navigate("/");
-            }, 1000);
-        }
-    }
+    //     const data = await response.text();
+    //     if (data !== "Success") {
+    //         if (data.includes("Password")) {
+    //             pass.current.style.border = "2px solid red";
+    //             setErrorMessage(prev => prev = data);
+    //         }
+    //         else if (data.includes("Email")) {
+    //             email.current.style.border = "2px solid red";
+    //             setErrorMessage(prev => prev = data);
+    //         }
+    //     }
+    //     else if(data === "Success") {
+    //         setErrorMessage(prev => prev = null);
+    //         pass.current.style.border = "2px solid rgb(50,205,50)";
+    //         email.current.style.border = "2px solid rgb(50,205,50)";
+    //         setTimeout(() => {
+    //             navigate("/");
+    //         }, 1000);
+    //     }
+    // }
 
     return (
         <section className="auth-page-form">
             {errorMessage != null ? <p style={{ color: "red" }}>{errorMessage}</p> : null}
             <input type="email" placeholder="Email" ref={email} />
             <input type="password" placeholder="Password" ref={pass} />
-            <button onClick={signIn}>Sign In</button>
+            {/* <button onClick={signIn}>Sign In</button> */}
         </section>
     );
 }
@@ -55,25 +55,25 @@ export default function SignInPage() {
     //Redirect
     const navigate = useNavigate();
 
-    useEffect(() => {
-        async function runThis(){
-            const response = await checkAuth();
-            if(typeof response === "string"){
-                navigate(response);
-            }  
-        }
-        runThis();
-    }, []);
+    // useEffect(() => {
+    //     async function runThis(){
+    //         const response = await checkAuth();
+    //         if(typeof response === "string"){
+    //             navigate(response);
+    //         }  
+    //     }
+    //     runThis();
+    // }, []);
 
-    useEffect(()=>{
-        async function runThis(){
-            const response = await checkIfAlreadyIn();
-            if(response !== null){
-                navigate(response);
-            }
-        }
-        runThis();
-    }, []);
+    // useEffect(()=>{
+    //     async function runThis(){
+    //         const response = await checkIfAlreadyIn();
+    //         if(response !== null){
+    //             navigate(response);
+    //         }
+    //     }
+    //     runThis();
+    // }, []);
 
     return (
         <div className="auth-page">

@@ -26,7 +26,7 @@ function EditForm({closeEditForm}){
   const genres = ["2D", "Action", "Adventure", 
     "FPS", "Open World", "Party", 
     "Puzzle", "Racing", "RPG", 
-    "Sport", "Story Telling", "VR"];
+    "Sport", "Story Telling", "VR", "Fighting", "Roguelike"];
 
   const platforms = ["PC", "PS4", "PS5", "XSX", "XSS", "Switch"];
 
@@ -306,7 +306,7 @@ export default function Admin(){
   const genres = ["2D", "Action", "Adventure", 
     "FPS", "Open World", "Party", 
     "Puzzle", "Racing", "RPG", 
-    "Sport", "Story Telling", "VR"];
+    "Sport", "Story Telling", "VR", "Fighting", "Roguelike"];
 
   const platforms = ["PC", "PS4", "PS5", "XSX", "XSS", "Switch"];
 

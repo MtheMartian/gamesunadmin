@@ -60,15 +60,15 @@ export default function SignUpPage() {
     //Redirect
     const navigate = useNavigate();
 
-    useEffect(() => {
-        async function runThis(){
-            const response = await checkAuth();
-            if(typeof response === "string"){
-                navigate(response);
-            }  
-        }
-        runThis();
-    }, []);
+    // useEffect(() => {
+    //     async function runThis(){
+    //         const response = await checkAuth();
+    //         if(typeof response === "string"){
+    //             navigate(response);
+    //         }  
+    //     }
+    //     runThis();
+    // }, []);
 
     return (
         <div className="auth-page">

@@ -1,5 +1,6 @@
 body{
   overflow: hidden;
+  background: rgb(32, 32, 32);
 }
 /* ------- Loader ------- */
 #loader{

@@ -33,6 +33,29 @@ h2{
   font-size: calc(1vw + 0.5rem);
 }
 
+.search-bar{
+  width: 40%;
+  border-radius: 20px;
+  padding: 10px;
+  font-size: calc(0.7vw + 0.8rem);
+  border: 0.5px solid black;
+  background:rgb(92, 92, 92);
+}
+
+.sections-header{
+  width: 100%;
+  background: rgb(0, 16, 34);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 100px;
+  padding-left: 40px;
+  padding-right: 40px;
+  height: 80px;
+}
+
 /* ------------ Title Creation Section ------------------ */
 #title-creation-container{
   width: 90%;
@@ -200,29 +223,6 @@ h2{
   border-radius: 5px;
 }
 
-#titles-section-header{
-  width: 100%;
-  background: rgb(0, 16, 34);
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 100px;
-  padding-left: 40px;
-  padding-right: 40px;
-  height: 80px;
-}
-
-#search-titles{
-  width: 40%;
-  border-radius: 20px;
-  padding: 10px;
-  font-size: calc(0.7vw + 0.8rem);
-  border: 0.5px solid black;
-  background:rgb(92, 92, 92);
-}
-
 .titles-section-image-wrapper{
   display: flex;
   flex-direction: column;
@@ -368,6 +368,11 @@ h2{
 #edit-form-selects select{
   width: 40%;
   text-align: center;
+}
+
+/*------- Team Section -------*/
+#team-section{
+  min-height: 500px;
 }
 
 /*------- Reviews Section -------*/
